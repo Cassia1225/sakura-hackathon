@@ -7,9 +7,8 @@ import views.personal as pe
 import views.QandA_screen as qa
 
 
-# 一旦のルール
-WORK_DAYS = 20
-OVERTIME_LIMIT = 40
+WORK_DAYS = 20 #仮の１ヶ月の所定労働日数
+OVERTIME_LIMIT = 40 #残業時間が40以上かどうかを調べるための定数
 
 
 st.set_page_config(
@@ -37,11 +36,11 @@ def home_screen():
     try:
         df = pd.read_csv(
             file,
-            dtype={"社員ID": "string"}
+            dtype={"社員ID": "string"} #文字列として社員IDを扱う
         )
 
-    except pd.errors.EmptyDataError:
-        st.error("CSVが空です。")
+    except:
+        st.error("CSVを入れてください")
         st.stop()
 
 
@@ -56,14 +55,14 @@ def home_screen():
         "出勤日数",
         "残業時間",
     ]
+    
+    missing = []
+    
+    for col in required:
+        if col not in df.columns:
+            missing.append(col)
 
-    missing = [
-        column
-        for column in required
-        if column not in df.columns
-    ]
-
-    if missing:
+    if missing: #赤文字エラーで出力する。
         st.error(
             "不足している列："
             + "、".join(missing)
@@ -87,7 +86,8 @@ def home_screen():
         "出勤日数",
         "残業時間",
     ]
-
+    
+    #文字列を数値に変換しておく
     for column in number_columns:
         df[column] = pd.to_numeric(
             df[column],
@@ -105,12 +105,12 @@ def home_screen():
         freq="M"
     )
 
-    results = []
+    results = [] #社員ごとの計算結果を保存する
 
     for _, employee in df.iterrows():
-        reasons = []
+        reasons = [] #要確認の理由
 
-        # 当月入社か
+        # 当月入社か否か
         joined = (
             employee["入社日"].to_period("M")
             == target
@@ -118,9 +118,7 @@ def home_screen():
 
         # 当月退職か
         retired = (
-            pd.notna(employee["退職日"])
-            and employee["退職日"].to_period("M")
-            == target
+            pd.notna(employee["退職日"]) and employee["退職日"].to_period("M") == target
         )
 
         # 月途中の入社か
@@ -131,15 +129,12 @@ def home_screen():
 
         # 月途中の退職か
         retired_midmonth = (
-            retired
-            and employee["退職日"].day
-            < employee["退職日"].days_in_month
+            retired and employee["退職日"].day < employee["退職日"].days_in_month
         )
 
         # 日割り対象か
         prorated = (
-            joined_midmonth
-            or retired_midmonth
+            joined_midmonth or retired_midmonth
         )
 
         if joined:
@@ -208,7 +203,7 @@ def home_screen():
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
     kpi1.metric(
-        "⚠ 要確認",
+        "要確認",
         f"{exceptions}名"
     )
 
@@ -322,4 +317,6 @@ elif menu == "出力確認":
     ou.output_screen_show()
 elif menu == "Q&A":
     qa.QandA_screen_show()
+else:
+    home_screen()
     
