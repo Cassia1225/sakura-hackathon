@@ -13,9 +13,6 @@ def personal_screen_show():
         layout="wide"
     )
 
-    st.caption("例外確認 ＞ 個別詳細")
-    st.title("個別詳細")
-
     #==============ページ上部=========================
     st.caption("例外確認 ＞ 個別詳細")
     st.title("個別詳細")
