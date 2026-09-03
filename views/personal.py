@@ -1,5 +1,5 @@
-#Q and A
+#個人
 import streamlit as st
 
-def QandA_screen_show():
+def personal_screen_show():
     st.write("作成中")

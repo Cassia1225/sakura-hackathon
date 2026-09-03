@@ -2,6 +2,9 @@ import pandas as pd
 import streamlit as st
 import views.irregular_screen as ir
 import views.monthly_processing_screen as mo
+import views.output as ou
+import views.personal as pe
+import views.QandA_screen as qa
 
 
 # 一旦のルール
@@ -16,7 +19,6 @@ st.set_page_config(
 )
 
 def home_screen():
-    #st.caption("給与処理 ＞ ホーム")
     st.title("おはようございます")
     st.write(
         "給与CSVを読み込み、"
@@ -157,8 +159,7 @@ def home_screen():
                 "残業40時間以上"
             )
 
-        # 日割り基本給
-        # 基本給 ÷ 20日 × 出勤日数
+        # 日割り基本給 基本給 ÷ 20日 × 出勤日数
         if prorated:
             basic_pay = round(
                 employee["基本給"]
@@ -305,8 +306,10 @@ with st.sidebar:
         [
             "ホーム",
             "例外確認",
+            "個別",
             "月次処理",
             "Q&A",
+            "出力確認",
         ]
     )
     
@@ -316,3 +319,10 @@ elif menu == '例外確認':
     ir.iregure_screen_show()
 elif menu == '月次処理':
     mo.monthly_processing_screen_show()
+elif menu == "個別":
+    pe.personal_screen_show()
+elif menu == "出力確認":
+    ou.output_screen_show()
+elif menu == "Q&A":
+    qa.QandA_screen_show()
+    
