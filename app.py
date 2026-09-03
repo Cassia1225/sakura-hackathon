@@ -305,7 +305,6 @@ with st.sidebar:
         "メニュー",
         [
             "ホーム",
-            "例外確認",
             "個別",
             "月次処理",
             "Q&A",
@@ -315,8 +314,6 @@ with st.sidebar:
     
 if menu == 'ホーム':
     home_screen()
-elif menu == '例外確認':
-    ir.iregure_screen_show()
 elif menu == '月次処理':
     mo.monthly_processing_screen_show()
 elif menu == "個別":
