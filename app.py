@@ -280,7 +280,6 @@ with st.sidebar:
             "個別",
             "月次処理",
             "Q&A",
-            "出力確認",
         ]
     )
 
@@ -290,8 +289,6 @@ elif menu == '月次処理':
     mo.monthly_processing_screen_show()
 elif menu == "個別":
     pe.personal_screen_show()
-elif menu == "出力確認":
-    ou.output_screen_show()
 elif menu == "Q&A":
     qa.QandA_screen_show()
 elif menu == "FAQ":
