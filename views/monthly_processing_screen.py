@@ -23,7 +23,7 @@ def monthly_processing_screen_show():
 
     # 想定CSVカラム名（給与ソフトの一般的な命名に合わせる）
     REQUIRED_COLUMNS = [
-        "社員ID", "氏名", "区分", "対象月", "支給額", "控除額", "差引支給額", "処理日",
+        "社員ID", "氏名", "部門", "区分", "対象月", "支給額", "控除額", "差引支給額", "処理日",
     ]
     CATEGORY_COLUMN = "区分"      # 区分列
     MONTHLY_VALUE = "月次"        # 月次処理のみを抽出する値

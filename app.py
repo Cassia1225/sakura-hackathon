@@ -6,6 +6,7 @@ import views.output as ou
 import views.personal as pe
 import views.QandA_screen as qa
 import views.FAQ_screen as fa
+import views.personal2 as pe2
 
 
 WORK_DAYS = 20 #仮の１ヶ月の所定労働日数
@@ -288,7 +289,7 @@ if menu == 'ホーム':
 elif menu == '月次処理':
     mo.monthly_processing_screen_show()
 elif menu == "個別":
-    pe.personal_screen_show()
+    pe2.personal_screen_show2()
 elif menu == "Q&A":
     qa.QandA_screen_show()
 elif menu == "FAQ":

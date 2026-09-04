@@ -7,8 +7,8 @@ def personal_screen_show():
     #=============ページ設定=========================
     st.set_page_config(
         page_title="個別詳細 | 給与コパイロット",
-        page_icon="💴",
-        layout="wide"
+        page_icon="",
+        layout="stretch"
     )
 
     #==============ページ上部=========================
