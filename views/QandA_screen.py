@@ -1,6 +1,7 @@
 #Q and A
 import streamlit as st
 import pandas as pd
+import re
 
 def QandA_screen_show():
     # ページ設定
