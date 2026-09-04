@@ -272,7 +272,7 @@ def home_screen():
 
 #ここから下が、ホーム画面を描画するための土台。一番最初はサイドバーだけが表示されている状態になる。
 with st.sidebar:
-    st.title("給与コパイロット")
+    st.title("Jット計算システム(JK)")
     
     menu = st.radio(
         "メニュー",
