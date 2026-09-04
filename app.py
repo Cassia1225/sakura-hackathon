@@ -14,7 +14,7 @@ OVERTIME_LIMIT = 40 #残業時間が40以上かどうかを調べるための定
 
 
 st.set_page_config(
-    page_title="給与コパイロット",
+    page_title="Jット計算システム(JK)",
     page_icon="",
     layout="wide"
 )
