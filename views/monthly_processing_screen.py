@@ -53,7 +53,6 @@ def monthly_processing_screen_show():
             return
         
     df_all = st.session_state.data.copy()
-    source_label = "ホーム画面で読み込んだデータ"
 
     # ───────────────────────────── バリデーション ─────────────────────────────
     missing = [c for c in REQUIRED_COLUMNS if c not in df_all.columns]
