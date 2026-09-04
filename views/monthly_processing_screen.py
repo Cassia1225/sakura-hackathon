@@ -51,7 +51,7 @@ def monthly_processing_screen_show():
             {"社員ID": "E0010", "氏名": "加藤 結衣",   "区分": "週次", "対象月": "2026-09", "支給額":  68000, "控除額":   8500, "差引支給額":  59500, "処理日": "2026-09-22"},
         ]
         buf = io.StringIO()
-        pd.DataFrame(rows, columns=REQUIRED_COLUMNS).to_csv(buf, index=False)
+        pd.DataFrame(st.session_state.data, columns=REQUIRED_COLUMNS).to_csv(buf, index=False)
         return buf.getvalue().encode("utf-8")
 
 

@@ -30,21 +30,24 @@ def home_screen():
         type="csv"
     )
 
-    if file is None:
-        st.info("CSVを選択してください。")
-        st.stop()
+    if file is not None:#もし新しいcsvが選ばれたら
 
-    try:
-        df = pd.read_csv(
-            file,
-            dtype={"社員ID": "string"} #文字列として社員IDを扱って、形を保つ
-        )
+        try:
+            df = pd.read_csv(
+                file,
+                dtype={"社員ID": "string"} #文字列として社員IDを扱って、形を保つ
+            )
 
-    except:
-        st.error("CSVを入れてください")
-        st.stop()
+        except:
+            st.error("CSVを入れてください")
+            return
         
-    st.session_state["payroll_df"] = df
+    elif "data" in st.session_state:
+        df = st.session_state.data.copy()
+    
+    else:
+        st.info('csvを選択してください')
+        return
 
 
     required = [
@@ -87,6 +90,13 @@ def home_screen():
         "基本給",
         "出勤日数",
         "残業時間",
+        "前月支給額",
+        "残業単価",
+        "残業代",
+        "手当額",
+        "支給額",
+        "控除額",
+        "差引支給額",
     ]
     
     #文字列を数値に変換しておく
@@ -95,6 +105,10 @@ def home_screen():
             df[column],
             errors="coerce"
         )
+    #他の画面でcsvデータを共有するために、整形したデータを保存
+    st.session_state.data = df.copy()
+    print(st.session_state.data)
+    
 
 
     # 日割り計算と例外判定
@@ -269,7 +283,7 @@ with st.sidebar:
             "出力確認",
         ]
     )
-    
+
 if menu == 'ホーム':
     home_screen()
 elif menu == '月次処理':
