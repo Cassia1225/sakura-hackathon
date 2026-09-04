@@ -5,6 +5,7 @@ import views.monthly_processing_screen as mo
 import views.output as ou
 import views.personal as pe
 import views.QandA_screen as qa
+import views.FAQ_screen as fa
 
 
 WORK_DAYS = 20 #仮の１ヶ月の所定労働日数
@@ -36,7 +37,7 @@ def home_screen():
     try:
         df = pd.read_csv(
             file,
-            dtype={"社員ID": "string"} #文字列として社員IDを扱う
+            dtype={"社員ID": "string"} #文字列として社員IDを扱って、形を保つ
         )
 
     except:
@@ -265,6 +266,7 @@ with st.sidebar:
             "個別",
             "月次処理",
             "Q&A",
+            "FAQ"
             "出力確認",
         ]
     )
@@ -279,6 +281,8 @@ elif menu == "出力確認":
     ou.output_screen_show()
 elif menu == "Q&A":
     qa.QandA_screen_show()
+elif menu == "FAQ":
+    fa.faq_screen_show()
 else:
     home_screen()
     
