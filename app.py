@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 def home_screen():
-    st.title("おはようございます")
+    st.title("こんにちは")
     st.write(
         "給与CSVを読み込み、"
         "今月の処理状況を確認しましょう。"
