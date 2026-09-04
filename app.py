@@ -14,7 +14,7 @@ OVERTIME_LIMIT = 40 #残業時間が40以上かどうかを調べるための定
 
 
 st.set_page_config(
-    page_title="Jット計算システム(JK)",
+    page_title="ジェット計算システム",
     page_icon="",
     layout="wide"
 )
@@ -272,7 +272,7 @@ def home_screen():
 
 #ここから下が、ホーム画面を描画するための土台。一番最初はサイドバーだけが表示されている状態になる。
 with st.sidebar:
-    st.title("Jット計算システム(JK)")
+    st.title("ジェット計算システム")
     
     menu = st.radio(
         "メニュー",
