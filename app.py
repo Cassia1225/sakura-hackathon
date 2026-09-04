@@ -42,6 +42,8 @@ def home_screen():
     except:
         st.error("CSVを入れてください")
         st.stop()
+        
+    st.session_state["payroll_df"] = df
 
 
     required = [
@@ -64,8 +66,7 @@ def home_screen():
 
     if missing: #赤文字エラーで出力する。
         st.error(
-            "不足している列："
-            + "、".join(missing)
+            "不足している列：" + "、".join(missing)
         )
         st.stop()
 
@@ -112,32 +113,35 @@ def home_screen():
 
         # 当月入社か否か
         joined = (
-            employee["入社日"].to_period("M")
-            == target
+            employee["入社日"].to_period("M") == target
         )
 
         # 当月退職か
         retired = (
+            #notnaで空欄じゃないか。　その上で退職年月と対象年月を比較する。
             pd.notna(employee["退職日"]) and employee["退職日"].to_period("M") == target
         )
 
         # 月途中の入社か
         joined_midmonth = (
-            joined
-            and employee["入社日"].day > 1
+            #当月入社かつ入社日が1日より後
+            joined and employee["入社日"].day > 1
         )
 
         # 月途中の退職か
         retired_midmonth = (
+            #employee['退職日'].days_in_monthは、その月の最終日で、退職日が20なら、 20 < 30　になる
             retired and employee["退職日"].day < employee["退職日"].days_in_month
         )
 
         # 日割り対象か
         prorated = (
+            #月途中の入社 or 月途中の退職なら
             joined_midmonth or retired_midmonth
         )
 
         if joined:
+            #もし当月入社なら、確認理由に追加
             reasons.append("当月入社")
 
         if retired:
@@ -146,35 +150,25 @@ def home_screen():
         if prorated:
             reasons.append("日割り計算")
 
-        if (
-            employee["残業時間"]
-            >= OVERTIME_LIMIT
-        ):
-            reasons.append(
-                "残業40時間以上"
-            )
+        if employee["残業時間"] >= OVERTIME_LIMIT:
+            reasons.append("残業40時間以上")
 
         # 日割り基本給 基本給 ÷ 20日 × 出勤日数
         if prorated:
             basic_pay = round(
-                employee["基本給"]
-                / WORK_DAYS
-                * employee["出勤日数"]
+                employee["基本給"] / WORK_DAYS * employee["出勤日数"]
             )
 
         else:
-            basic_pay = int(
-                employee["基本給"]
-            )
+            basic_pay = int(employee["基本給"])
 
         results.append({
+            #現在の社員の計算結果をresultに入れる
             "社員ID": employee["社員ID"],
             "氏名": employee["氏名"],
             "部門": employee["部門"],
-            "日割り": (
-                "対象"
-                if prorated
-                else "対象外"
+            "日割り": (#日割り対象か否か
+                "対象" if prorated else "対象外"
             ),
             "基本給計算額": basic_pay,
             "検知理由": "／".join(reasons),
@@ -183,15 +177,15 @@ def home_screen():
 
     result_df = pd.DataFrame(results)
 
-    # 例外がある社員だけを抽出
-    exception_df = result_df[
-        result_df["検知理由"] != ""
-    ]
+    # 例外がある社員だけを抽出（検知理由が空でない社員のみを抽出する。）
+    exception_df = result_df[result_df["検知理由"] != ""]
+    
+    st.session_state["exception_df"] = exception_df
 
 
     # ホーム画面に表示する数字
-    total = len(df)
-    exceptions = len(exception_df)
+    total = len(df)#csvに入っている社員の総数
+    exceptions = len(exception_df)#要確認の社員の総数
 
 
     st.success(
@@ -202,97 +196,65 @@ def home_screen():
 
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
-    kpi1.metric(
+    kpi1.metric(#大きく数字を表示するコンポーネントの描画をする。
         "要確認",
         f"{exceptions}名"
     )
 
-    left, right = st.columns(
-        [1.5, 1]
-    )
+    left, right = st.columns([1.5, 1])
 
     with right:
-        st.subheader(
-            "要確認の内訳"
-        )
+        st.subheader("要確認の内訳")
 
+        #検知理由に当月入社が含まれている社員数を計算
         joined_count = (
-            exception_df["検知理由"]
-            .str.contains("当月入社")
-            .sum()
-        )
+            exception_df["検知理由"].str.contains("当月入社").sum()
+            )
 
         retired_count = (
-            exception_df["検知理由"]
-            .str.contains("当月退職")
-            .sum()
+            exception_df["検知理由"].str.contains("当月退職").sum()
         )
 
-        prorated_count = (
-            exception_df["検知理由"]
-            .str.contains("日割り計算")
-            .sum()
+        prorated_count = (#日割りの人数を数える
+            exception_df["検知理由"].str.contains("日割り計算").sum()
         )
 
         overtime_count = (
-            exception_df["検知理由"]
-            .str.contains("残業40時間以上")
-            .sum()
+            exception_df["検知理由"].str.contains("残業40時間以上").sum()
         )
 
-        st.write(
-            "当月入社：",
-            joined_count,
-            "名"
-        )
+        st.write("当月入社：", joined_count, "名")
 
-        st.write(
-            "当月退職：",
-            retired_count,
-            "名"
-        )
+        st.write("当月退職：", retired_count, "名")
 
-        st.write(
-            "日割り計算：",
-            prorated_count,
-            "名"
-        )
+        st.write("日割り計算：", prorated_count, "名")
 
-        st.write(
-            "残業40時間以上：",
-            overtime_count,
-            "名"
-        )
+        st.write("残業40時間以上：", overtime_count, "名")
 
 
     # 今やるべきこと
-    st.subheader(
-        "今やるべきこと"
-    )
+    st.subheader("今やるべきこと")
 
     st.write(
         f"要確認社員"
         f"{exceptions}名を確認する"
     )
 
-
-    # 要確認社員一覧
-    st.subheader(
-        "要確認社員"
-    )
+    # 要確認社員一覧の見出し
+    st.subheader("要確認社員")
 
     st.warning(
-        "日割りは"
-        "「基本給 ÷ 20日 × 出勤日数」"
-        "で仮計算しています。"
-    )
-
-    st.dataframe(
-        exception_df,
-        width="stretch",
-        hide_index=True
+        "日割りは「基本給 ÷ 20日 × 出勤日数」で仮計算しています。"
     )
     
+    #ここで、要確認者を表として出力する
+    st.dataframe(
+        exception_df,#表示する表
+        width="stretch",#画面幅に合わせている
+        hide_index=True#左端にある行番号を隠している
+    )
+
+#ここから下が、ホーム画面を描画するための土台。一番最初はサイドバーだけが表示されている状態になる。
 with st.sidebar:
     st.title("給与コパイロット")
     
